@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>тоглоом</title>
+<style>
+    html, body {
+        margin: 0; /* хуудасны margin арилгах */
+        padding: 0; /* padding арилгах */
+        width: 100%; /* дэлгэцийн өргөнтэй тааруулах */
+        overflow: hidden; /* scrollbar гаргахгүй байх */
+        background: black; /* background өнгө хар */
+        font-family: Arial, sans-serif; /* font тохируулах */
+    }
+
+    h2 {
+        color: white; /* гарчигны өнгө */
+        text-align: center; /* төвд байрлуулах */
+    }
+
+    #gameArea {
+        width: 100%; /* дэлгэцийн өргөн */
+        height: 400px; /* өндөр */
+        background-image: url("zam1.jpg"); /* замны зураг */
+        background-repeat: repeat-x; /* хөндлөн давтах */
+        background-size: auto 400px; /* өндөр тааруулах */
+        position: relative; /* байрлалын харгалзах */
+        overflow: hidden; /* машиныг хэтрэхэд нуух */
+    }
+
+    .moveRoad {
+        animation: moveBg 3s linear infinite;
+    }
+
+    @keyframes moveBg {
+        from { background-position-x: 0; }
+        to   { background-position-x: -1500px; } /* замын хөдөлгөөн */
+    }
+
+    img {
+        width: 250px; /* машины хэмжээ */
+        position: absolute; /* absolute байрлал */
+        display: none; /* эхэндээ машин алга */
+    }
+
+    #car1 { top: 40px; left: 0; } /* ногоон машин байрлал */
+    #car2 { top: 240px; left: 0; } /* цэнхэр машин байрлал */
+
+    #winText {
+        display: none; /* эхэндээ алга */
+        position: absolute; /* тоглоомын талбайд байрлах */
+        top: 35%; /* дээшээс зай */
+        width: 100%; /* дэлгэцийн өргөн */
+        text-align: center; /* төвд байрлуулах */
+        font-size: 60px; /* том хэмжээ */
+        color: yellow; /* өнгө */
+    }
+
+    #startBtn {
+        padding: 12px 20px; /* доторхи зай */
+        background: green; /* ногоон товч */
+        color: white; /* текстийн өнгө */
+        border: none; /* хил хязгааргүй */
+        cursor: pointer; /* сум хэлбэрийн курсор */
+        font-size: 22px; /* текст хэмжээ */
+    }
+
+    #btnArea {
+        text-align: center; /* төвд */
+        margin-top: 10px; /* дээрээс зай */
+    }
+</style>
+</head>
+<body>
+
+<h2>Эхлэх үү</h2>
+
+<div id="gameArea">
+    <img src="nogoon1.png" id="car1"> <!-- ногоон машин -->
+    <img src="tsenher1.png" id="car2"> <!-- цэнхэр машин -->
+    <div id="winText"></div> <!-- WIN текст -->
+</div>
+
+<!-- START товч -->
+<div id="btnArea">
+    <button id="startBtn">START</button>
+</div>
+
+<script>
+    const car1 = document.getElementById("car1"); 
+    const car2 = document.getElementById("car2"); 
+    const winText = document.getElementById("winText"); 
+    const startBtn = document.getElementById("startBtn"); 
+    const gameArea = document.getElementById("gameArea"); 
+    let cgo1 = 0; 
+    let cgo2 = 0;
+    const finish = 1700; // дуусах шугам
+    let gameStarted = false; // тоглоом эхэлсэн эсэх
+
+    startBtn.addEventListener("click", () => {
+        // байрлалыг reset хийх
+        cgo1 = 0;
+        cgo2 = 0;
+        car1.style.left = "0px";
+        car2.style.left = "0px";
+
+        // машин харуулах
+        car1.style.display = "block";
+        car2.style.display = "block";
+
+        winText.style.display = "none";
+
+        gameStarted = true;
+
+        gameArea.classList.add("moveRoad");
+
+        startBtn.style.display = "none";
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (!gameStarted) return; // тоглоом эхлээгүй бол юу ч хийхгүй
+
+        if (event.key === "a") { // ногоон машин
+            cgo1 += 50; 
+            car1.style.left = cgo1 + "px";
+        }
+
+        if (event.key === "s") { // цэнхэр машин
+            cgo2 += 50; 
+            car2.style.left = cgo2 + "px";
+        }
+
+        if (cgo1 >= finish) win("Ногоон машин хожлоо", car1);
+        if (cgo2 >= finish) win("Цэнхэр машин хожлоо", car2);
+    });
+
+    function win(text, winnerCar) {
+        gameStarted = false; // тоглоом зогсоно
+        gameArea.classList.remove("moveRoad"); // зам зогсоно
+
+        winText.innerHTML = text;
+        winText.style.display = "block";
+
+       
+        winnerCar.style.transition = "all 0.5s ease";
+        winnerCar.style.transform = "scale(1.3)";
+
+        startBtn.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
